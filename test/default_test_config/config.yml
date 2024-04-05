@@ -19,4 +19,5 @@ git:
   # shell command in the background) we should have the user press shift+R to refresh.
   # TODO: add tests which explicitly test auto-refresh functionality
   autoRefresh: false
+  removeLocks: false
   autoFetch: false

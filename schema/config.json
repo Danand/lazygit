@@ -475,6 +475,11 @@
           "description": "If true, periodically refresh files and submodules",
           "default": true
         },
+        "removeLocks": {
+          "type": "boolean",
+          "description": "If true, forcefully remove `.git/index.lock`",
+          "default": false
+        },
         "fetchAll": {
           "type": "boolean",
           "description": "If true, pass the --all arg to git fetch",

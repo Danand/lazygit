@@ -197,6 +197,8 @@ type GitConfig struct {
 	AutoFetch bool `yaml:"autoFetch"`
 	// If true, periodically refresh files and submodules
 	AutoRefresh bool `yaml:"autoRefresh"`
+	// If true, forcefully remove `.git/index.lock`
+	RemoveLocks bool `yaml:"removeLocks"`
 	// If true, pass the --all arg to git fetch
 	FetchAll bool `yaml:"fetchAll"`
 	// Command used when displaying the current branch git log in the main window
@@ -697,6 +699,7 @@ func GetDefaultConfig() *UserConfig {
 			MainBranches:                 []string{"master", "main"},
 			AutoFetch:                    true,
 			AutoRefresh:                  true,
+			RemoveLocks:                  false,
 			FetchAll:                     true,
 			BranchLogCmd:                 "git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium {{branchName}} --",
 			AllBranchesLogCmd:            "git log --graph --all --color=always --abbrev-commit --decorate --date=relative  --pretty=medium",
