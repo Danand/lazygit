@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jesseduffield/lazygit/pkg/commands/oscommands"
+	"github.com/jesseduffield/lazygit/pkg/config"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,6 +19,7 @@ const (
 type gitCmdObjRunner struct {
 	log         *logrus.Entry
 	innerRunner oscommands.ICmdObjRunner
+	userConfig  *config.UserConfig
 }
 
 func (self *gitCmdObjRunner) Run(cmdObj oscommands.ICmdObj) error {
@@ -41,6 +43,12 @@ func (self *gitCmdObjRunner) RunWithOutput(cmdObj oscommands.ICmdObj) (string, e
 		time.Sleep(WaitTime)
 	}
 
+	if self.userConfig.Git.RemoveLocks {
+		oscommands.NewDummyOSCommand().Cmd.New([]string{"rm", "-f", ".git/index.lock"}).Run()
+		newCmdObj := cmdObj.Clone()
+		output, err = self.innerRunner.RunWithOutput(newCmdObj)
+	}
+
 	return output, err
 }
 
@@ -58,6 +66,12 @@ func (self *gitCmdObjRunner) RunWithOutputs(cmdObj oscommands.ICmdObj) (string, 
 		// if we have an error based on the index lock, we should wait a bit and then retry
 		self.log.Warn("index.lock prevented command from running. Retrying command after a small wait")
 		time.Sleep(WaitTime)
+	}
+
+	if self.userConfig.Git.RemoveLocks {
+		oscommands.NewDummyOSCommand().Cmd.New([]string{"rm", "-f", ".git/index.lock"}).Run()
+		newCmdObj := cmdObj.Clone()
+		stdout, stderr, err = self.innerRunner.RunWithOutputs(newCmdObj)
 	}
 
 	return stdout, stderr, err
