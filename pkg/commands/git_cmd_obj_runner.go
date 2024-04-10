@@ -36,7 +36,7 @@ func (self *gitCmdObjRunner) RunWithOutput(cmdObj oscommands.ICmdObj) (string, e
 		newCmdObj := cmdObj.Clone()
 		output, err = self.innerRunner.RunWithOutput(newCmdObj)
 
-		if err == nil || !strings.Contains(output, ".git/index.lock") {
+		if err == nil || !strings.Contains(output, "index.lock") {
 			return output, err
 		}
 
