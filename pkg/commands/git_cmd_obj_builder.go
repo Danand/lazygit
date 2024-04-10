@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"github.com/jesseduffield/lazygit/pkg/commands/git_commands"
 	"github.com/jesseduffield/lazygit/pkg/commands/oscommands"
 	"github.com/jesseduffield/lazygit/pkg/config"
 	"github.com/sirupsen/logrus"
@@ -19,6 +20,7 @@ func NewGitCmdObjBuilder(
 	log *logrus.Entry,
 	innerBuilder *oscommands.CmdObjBuilder,
 	userConfig *config.UserConfig,
+	repoPaths *git_commands.RepoPaths,
 ) *gitCmdObjBuilder {
 	// the price of having a convenient interface where we can say .New(...).Run() is that our builder now depends on our runner, so when we want to wrap the default builder/runner in new functionality we need to jump through some hoops. We could avoid the use of a decorator function here by just exporting the runner field on the default builder but that would be misleading because we don't want anybody using that to run commands (i.e. we want there to be a single API used across the codebase)
 	updatedBuilder := innerBuilder.CloneWithNewRunner(func(runner oscommands.ICmdObjRunner) oscommands.ICmdObjRunner {
@@ -26,6 +28,7 @@ func NewGitCmdObjBuilder(
 			log:         log,
 			innerRunner: runner,
 			userConfig:  userConfig,
+			repoPaths:   repoPaths,
 		}
 	})
 

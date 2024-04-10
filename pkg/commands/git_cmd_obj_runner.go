@@ -4,6 +4,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jesseduffield/lazygit/pkg/commands/git_commands"
 	"github.com/jesseduffield/lazygit/pkg/commands/oscommands"
 	"github.com/jesseduffield/lazygit/pkg/config"
 	"github.com/sirupsen/logrus"
@@ -20,6 +21,7 @@ type gitCmdObjRunner struct {
 	log         *logrus.Entry
 	innerRunner oscommands.ICmdObjRunner
 	userConfig  *config.UserConfig
+	repoPaths   *git_commands.RepoPaths
 }
 
 func (self *gitCmdObjRunner) Run(cmdObj oscommands.ICmdObj) error {
@@ -44,7 +46,8 @@ func (self *gitCmdObjRunner) RunWithOutput(cmdObj oscommands.ICmdObj) (string, e
 	}
 
 	if self.userConfig.Git.RemoveLocks {
-		oscommands.NewDummyOSCommand().Cmd.New([]string{"rm", "-f", ".git/index.lock"}).Run()
+		indexLockPath := self.repoPaths.WorktreeGitDirPath() + "/index.lock"
+		oscommands.NewDummyOSCommand().Cmd.New([]string{"rm", "-f", indexLockPath}).Run()
 		newCmdObj := cmdObj.Clone()
 		output, err = self.innerRunner.RunWithOutput(newCmdObj)
 	}

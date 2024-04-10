@@ -99,7 +99,12 @@ func NewGitCommandAux(
 	repoPaths *git_commands.RepoPaths,
 	repo *gogit.Repository,
 ) *GitCommand {
-	cmd := NewGitCmdObjBuilder(cmn.Log, osCommand.Cmd, cmn.UserConfig)
+	repoPaths, err := git_commands.GetRepoPaths(osCommand.Cmd, version)
+	if err != nil {
+		cmn.Log.Warn(err)
+	}
+
+	cmd := NewGitCmdObjBuilder(cmn.Log, osCommand.Cmd, cmn.UserConfig, repoPaths)
 
 	// here we're doing a bunch of dependency injection for each of our commands structs.
 	// This is admittedly messy, but allows us to test each command struct in isolation,
